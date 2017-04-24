@@ -50,3 +50,6 @@ http://www.instructables.com/id/C-Library-for-HD44780-LCD-Display-Controller/
 
 A interesting Web site talk about these character display:
 http://sprut.de/electronic/lcd/index.html
+
+Paul's LiquidCrystal Library (LiquidCrystalFast) looks very very good for the working status for me. (Only replace "pinMode()", "digitalWrite()" instructions with Beaglebone can accepted instructions can do the trick.)
+https://www.pjrc.com/teensy/td_libs_LiquidCrystal.html
