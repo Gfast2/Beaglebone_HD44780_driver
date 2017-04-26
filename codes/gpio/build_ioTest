@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo "build ioTest"
+
+g++ -O2 -Wall ioTest.cpp SimpleGPIO.cpp -o ioTest 
