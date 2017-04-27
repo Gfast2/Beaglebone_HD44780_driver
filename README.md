@@ -1,15 +1,15 @@
-Personal Project about exploring the control of a HD44780 through Beaglebone.
+## Personal Project about exploring the control of a HD44780 through Beaglebone.
 
 There are many LCD display around us these days. "Character Display" are fading out. I believe that is because the color display are getting cheaper and cheaper. Sure they can do much more things compare to a typical character display. But the character display is something like "7-Segment-Display", which belonge to the part of our memory. Since some days before I saw a youtube view showing around tuning the HD44780 Character Display, to let it show very very stylful stuffs. I decided to do something by myself.  
 
-Reference Link:
+**Reference Link:**
 http://www.thebrokendesk.com/post/writing-to-an-lcd-screen-with-the-beaglebone-black/
 https://github.com/Wicker25/Rpi-hw (C++ Library for Raspberry pi)
 https://www.youtube.com/watch?v=31IZaJWMYjU
 
-How to Control LCD Displays | Arduino Tutorial. 
+[How to Control LCD Displays | Arduino Tutorial.](https://www.youtube.com/watch?v=85LvW1QDLLw)
 (Basic working logic about how to control the display)
-https://www.youtube.com/watch?v=85LvW1QDLLw
+
 
 LCD Graphics MegaDemo HD44780
 https://www.youtube.com/watch?v=HugwQ4b9iBU&t=79s
