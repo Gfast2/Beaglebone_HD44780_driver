@@ -2,7 +2,6 @@
 //#include <stdio.h>
 //#include <string.h>
 
-
 /******************************************/
 /**  hardware initialization             **/
 /******************************************/
@@ -26,9 +25,10 @@
 // can't assume that its in that state when a sketch starts (and the
 // LiquidCrystalFast constructor is called).
 
-void LiquidCrystalFast::init(uint8_t rs, uint8_t rw, uint8_t enable, uint8_t en2,
-	uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3)
-{
+void LiquidCrystalFast::init(
+	uint8_t rs, uint8_t rw, uint8_t enable, uint8_t en2,
+	uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3
+){
 	_rs_pin = rs;
 	_rw_pin = 255;
 	_enable_pin = enable;
@@ -79,7 +79,7 @@ void LiquidCrystalFast::begin(uint8_t cols, uint8_t lines, uint8_t dotsize)
 	
 	if (_en2 != 255) {                      //if we were called with a 2nd enable line i.e. 4x40 LCD
 		row_offsets[2] = 0;
-		row_offsets[3] = 0x40;             //each line gets its own little 40 char section of DDRAM--would be fine if there were a 4x32, I suppose
+		row_offsets[3] = 0x40;              //each line gets its own little 40 char section of DDRAM--would be fine if there were a 4x32, I suppose
 		_chip = 2;
 		begin2( cols,  lines,  dotsize,_en2);//initialize the second HD44780 chip
 	}
@@ -103,7 +103,9 @@ void LiquidCrystalFast::begin2(uint8_t cols, uint8_t lines, uint8_t dotsize, uin
 	// before sending commands. Arduino can turn on way before 4.5V.
 	// is this delay long enough for all cases??
 	for (uint8_t i=0;i<18;i++) {
-		delayMicroseconds(7500);
+		// http://stackoverflow.com/questions/1157209/is-there-an-alternative-sleep-function-in-c-to-milliseconds
+		usleep(7500);
+		// delayMicroseconds(7500);
 	}
 
 	// Now we pull both RS and R/W low to begin commands
@@ -120,16 +122,20 @@ void LiquidCrystalFast::begin2(uint8_t cols, uint8_t lines, uint8_t dotsize, uin
 	// on them don't matter for these instructions.
 	gpio_set_value(_rs_pin, LOW);
 	write4bits(0x03);
-	delayMicroseconds(5000); // I have one LCD for which 4500 here was not long enough.
+	// delayMicroseconds(5000); // I have one LCD for which 4500 here was not long enough.
+	usleep(5000);
 	// second try
 	write4bits(0x03);      
-	delayMicroseconds(150); // wait 
+	// delayMicroseconds(150); // wait 
+	usleep(150);
 	// third go!
 	write4bits(0x03); 
-	delayMicroseconds(150);
+	// delayMicroseconds(150);
+	usleep(150);
 	// finally, set to 4-bit interface
 	write4bits(0x02); 
-	delayMicroseconds(150);
+	// delayMicroseconds(150);
+	usleep(150);
 
 	
 	// finally, set # lines, font size, etc.
@@ -316,11 +322,13 @@ void LiquidCrystalFast::commandBoth(uint8_t value)
 }
 
 //print calls  this to send characters to the LCD
+/*
 #if defined(ARDUINO) && ARDUINO >= 100
 size_t LiquidCrystalFast::write(uint8_t value) {
 #else
 void LiquidCrystalFast::write(uint8_t value) {
 #endif
+*/
 
 	if ((_scroll_count != 0) || (_setCursFlag != 0) ) setCursor(_x,_y);   //first we call setCursor and send the character
 	if ((value != '\r') && (value != '\n') ) send(value, HIGH);
@@ -343,10 +351,10 @@ void LiquidCrystalFast::write(uint8_t value) {
 		}
 	}
 	if (_y >= _numlines) _y = 0;   //wrap last line up to line 0
-#if defined(ARDUINO) && ARDUINO >= 100
-	return 1;
-#endif
-}
+// #if defined(ARDUINO) && ARDUINO >= 100
+// 	return 1;
+// #endif
+// } // TODO: Where dose this comes from
 
 
 /****************************************/
@@ -358,7 +366,8 @@ void LiquidCrystalFast::send(uint8_t value, uint8_t mode) {
 	uint8_t en = _enable_pin;
 	if ((_en2 != 255) && (_chip)) en = _en2;
 	if (_rw_pin == 255) {
-		delayMicroseconds(DELAYPERCHAR);
+		// delayMicroseconds(DELAYPERCHAR);
+		usleep(DELAYPERCHAR);
 	} else {
 		gpio_set_dir(_data_pins[0], INPUT);
 		gpio_set_dir(_data_pins[1], INPUT);
