@@ -11,27 +11,21 @@ https://www.youtube.com/watch?v=31IZaJWMYjU
 (Basic working logic about how to control the display)
 
 
-LCD Graphics MegaDemo HD44780
-https://www.youtube.com/watch?v=HugwQ4b9iBU&t=79s
+[LCD Graphics MegaDemo HD44780](https://www.youtube.com/watch?v=HugwQ4b9iBU&t=79s)
 
-HD44780 Graphic Transitions
-https://www.youtube.com/watch?v=bN-XRXLx88Y
+[HD44780 Graphic Transitions](https://www.youtube.com/watch?v=bN-XRXLx88Y)
 
-The forum that talked about these MegaDemo
-http://www.picbasic.co.uk/forum/showthread.php?t=18416
+[The forum that talked about these MegaDemo](http://www.picbasic.co.uk/forum/showthread.php?t=18416)
 
 Another old example: (Odometer effect)
-https://www.youtube.com/watch?v=T6DAZphHbjI
-https://www.youtube.com/watch?v=eVILMbrI3ok#t=76.901
+[Link1](https://www.youtube.com/watch?v=T6DAZphHbjI)
+[Link2](https://www.youtube.com/watch?v=eVILMbrI3ok#t=76.901)
 
-ASCII Demo:
-https://www.youtube.com/watch?v=6-SmBeeXRBQ
+[ASCII Demo:](https://www.youtube.com/watch?v=6-SmBeeXRBQ)
 
-github repo of the in chip pru:
-https://github.com/beagleboard/am335x_pru_package
+[github repo of the in chip pru:](https://github.com/beagleboard/am335x_pru_package)
 
-wiki page of the in chip pru:
-http://elinux.org/Ti_AM33XX_PRUSSv2
+[wiki page of the in chip pru:](http://elinux.org/Ti_AM33XX_PRUSSv2)
 
 How to control 40x4 HD44780 display( LCDd daemon ):
 http://images.google.de/imgres?imgurl=http%3A%2F%2Fwww.forum-raspberrypi.de%2Fattachment.php%3Fthumbnail%3D8365&imgrefurl=http%3A%2F%2Fwww.forum-raspberrypi.de%2FThread-libreelec-hd44780-lcd-40x4-raspberry-1-modell-b&h=204&w=370&tbnid=5EbBMcydcYqZYM%3A&docid=YRSrBI69p3Ti2M&ei=dboOWN3YD8SHgAbt1JnoDw&tbm=isch&client=safari&iact=rc&uact=3&dur=636&page=0&start=0&ndsp=21&ved=0ahUKEwid5_7k6_TPAhXEA8AKHW1qBv0QMwgmKAgwCA&safe=off&bih=816&biw=1264
