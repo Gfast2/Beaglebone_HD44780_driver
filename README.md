@@ -41,3 +41,8 @@ http://images.google.de/imgres?imgurl=http%3A%2F%2Fwww.forum-raspberrypi.de%2Fat
 [A interesting Web site talk about these character display](http://sprut.de/electronic/lcd/index.html)
 
 [Paul's LiquidCrystal Library (LiquidCrystalFast) looks very very good for the working status for me.](https://www.pjrc.com/teensy/td_libs_LiquidCrystal.html)
+
+[4 bit mode](https://learningmsp430.wordpress.com/2013/11/16/16x2-lcd-interfacing-in-4-bit-mode/)
+In 4 bit mode, first upper nibble, then lower nibble.
+
+
