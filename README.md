@@ -47,4 +47,8 @@ In 4 bit mode, first upper nibble, then lower nibble.
 
 Because the busy flag (FG) is set to 1 while an instruction is being executed, check it to make sure it is 0 before sending another instruction from the MPU. (HD44780.pdf P.24)
 
-
+[overo-blinkm](https://github.com/scottellis/overo-blinkm): control BlinkM in Linux Command line
+It looks like that BlinkM has really some nice scripts build into their firmware.
+TODO: Fork this repo, pulling some requests to it:
+/ in tool-tips list, play-script argument "-n num_repeats" is also optional. If it's not specified, the loop go permanently. So it should be written like "[-n num_repeats]
+/ Add new settings for beaglebone black in "i2c_functions.c"
