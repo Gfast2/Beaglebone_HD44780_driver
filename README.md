@@ -45,4 +45,6 @@ http://images.google.de/imgres?imgurl=http%3A%2F%2Fwww.forum-raspberrypi.de%2Fat
 [4 bit mode](https://learningmsp430.wordpress.com/2013/11/16/16x2-lcd-interfacing-in-4-bit-mode/)
 In 4 bit mode, first upper nibble, then lower nibble.
 
+Because the busy flag (FG) is set to 1 while an instruction is being executed, check it to make sure it is 0 before sending another instruction from the MPU. (HD44780.pdf P.24)
+
 
