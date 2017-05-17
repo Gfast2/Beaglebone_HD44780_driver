@@ -52,3 +52,5 @@ It looks like that BlinkM has really some nice scripts build into their firmware
 TODO: Fork this repo, pulling some requests to it:
 / in tool-tips list, play-script argument "-n num_repeats" is also optional. If it's not specified, the loop go permanently. So it should be written like "[-n num_repeats]
 / Add new settings for beaglebone black in "i2c_functions.c"
+
+[here](http://gnutoolchains.com/beaglebone/) I can find some usefull cross-compile-tool-chain for Windows user 

@@ -4,6 +4,15 @@ This is the ***Dairy*** of this Project. Visit [**my website**](http://www.gao-s
 
 ## TODO ##
 
+/ Build up the "Hello World!" Sketch that control HD44780 directly
+- sketch this code
+- compile it without error
+- **LOG**: LiquidCrystalFast.cpp are using function from SimpleGPIO.cpp, It just can't.
+- **PS**: Read [this](http://www.cplusplus.com/forum/articles/10627/) about how c/c++ is compiled
+
+/ Hook up all wires
+- Hook
+- Test all connections with scope & code sketch of above
 
 ## FINISHED ##
 
@@ -33,3 +42,15 @@ And the GNDs from both sides of LC are separated from each other
 -> I'm thinking, that there is a short circuit on SDA of BlinkM
 -> (After a long probing around with scope) The BlinkM pulled down SDA permanently as reaction. Likely wanna say something to Beaglebone, but without success.
 > - After all these test, I think the command that i2cdetect are using for probing diffrent ports are for BlinkM unknow.
+
+find overo-blinkm lbrary on github that let me control BlinkM without problem anymore
+
+### ####### 15.05.2017 ####### ###
+Build-Up cross-compile toolchain for deploying software from Eclipse to Beaglebone
+
+### ####### 16.05.2017 ####### ###
+- Test Some of the free GPIO pins with scope
+
+- Figure out even I've run as `root` for controlling LCD control pins (like P8_46) I still just can't toggle its value in real (Software aspect permitted though)
+
+### ####### 17.05.2017 ####### ###
