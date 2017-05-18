@@ -32,7 +32,7 @@ void LiquidCrystalFast::init(
 	uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3
 ){
 	_rs_pin = rs;
-	_rw_pin = 255;
+	_rw_pin = rw;
 	_enable_pin = enable;
 	_en2 = en2;
 	_chip = 0;
@@ -48,7 +48,7 @@ void LiquidCrystalFast::init(
 	_data_pins[2] = d2;
 	_data_pins[3] = d3; 
 
-	gpio_set_dir(d0, OUTPUT_PIN); //set data pin modes
+	gpio_set_dir(d0, OUTPUT_PIN); //set data pin modes, // TODO: Why _data_pins[n] aren't used? Paul, is that from you?
 	gpio_set_dir(d1, OUTPUT_PIN);
 	gpio_set_dir(d2, OUTPUT_PIN);
 	gpio_set_dir(d3, OUTPUT_PIN);
@@ -62,13 +62,13 @@ void LiquidCrystalFast::init(
 	// we can save 1 pin by not using RW. Indicate by passing 255 instead of pin#
 	if (rw != 255) { 
 		gpio_set_dir(rw, OUTPUT_PIN);  //once in init does it
-		gpio_set_value(rw,LOW); //write data to LCD mode
+		gpio_set_value(rw,LOW); //write data to LCD mode: LOW->Write to Display, HIGH->Read from Display
 	}
 	gpio_set_dir(_enable_pin, OUTPUT_PIN);
 	if( en2 != 255) gpio_set_dir(en2,OUTPUT_PIN);  //4X40 LCD
 
-	begin(20, 1); 
-	_rw_pin = rw;         //the game to initialize the 40x4 is over
+	begin(20, 1); // TODO: Figure out which "begin()" is called here, why call a 20x1 one but not like 16x2 one?
+	// _rw_pin = rw;         //the game to initialize the 40x4 is over, // There is still some dirty tweak here! @Paul
 }
 
 void LiquidCrystalFast::begin(uint8_t cols, uint8_t lines, uint8_t dotsize)
