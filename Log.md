@@ -59,3 +59,10 @@ Build-Up cross-compile toolchain for deploying software from Eclipse to Beaglebo
 
 ### ####### 18.05.2017 ####### ###
 - resolve "gpio_get_value()" / "gpio_set_value()" in LiquidCrystalFast.cpp
+- **Marion** think
+  - Its bad practice to define header in source code. All user defined included header should be saved in a folder, and this directory (folder) should be defined in makefiles
+  - I should build the proof of concept prototype that without any "_libx_" (third party library) that control the display
+- Figured out this say: `LiquidCrystalFast` class **extend** class `Print` (from Arduino) (In source code of `LiquidCrystalFast.h`)
+```
+class LiquidCrystalFast : public Print { ... }
+```
