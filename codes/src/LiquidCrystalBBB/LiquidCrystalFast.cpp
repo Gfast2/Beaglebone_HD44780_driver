@@ -412,7 +412,7 @@ void LiquidCrystalFast::send(uint8_t value, uint8_t mode) {
 	gpio_set_value(_data_pins[1], (value & 0x20) == 1 ? HIGH : LOW);
 	gpio_set_value(_data_pins[2], (value & 0x40) == 1 ? HIGH : LOW);
 	gpio_set_value(_data_pins[3], (value & 0x80) == 1 ? HIGH : LOW);
-	gpio_set_value(en, HIGH);   // enable pulse must be >450ns
+	gpio_set_value(en, HIGH);   // enable pulse must be >450ns // TODO: Use scope to make sure Beaglebone won't do it "too fast" for this
 	gpio_set_value(en, LOW);
 
 	gpio_set_value(_data_pins[0], (value & 0x01) == 1 ? HIGH : LOW);
