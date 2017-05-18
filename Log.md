@@ -8,7 +8,7 @@ This is the ***Dairy*** of this Project. Visit [**my website**](http://www.gao-s
 - sketch this code
 - compile it without error
 - **LOG**: LiquidCrystalFast.cpp are using function from SimpleGPIO.cpp, It just can't.
-- **PS**: Read [this](http://www.cplusplus.com/forum/articles/10627/) about how c/c++ is compiled
+- **PS**: 
 
 / Hook up all wires
 - Hook
@@ -54,3 +54,8 @@ Build-Up cross-compile toolchain for deploying software from Eclipse to Beaglebo
 - Figure out even I've run as `root` for controlling LCD control pins (like P8_46) I still just can't toggle its value in real (Software aspect permitted though)
 
 ### ####### 17.05.2017 ####### ###
+- Read [this](http://www.cplusplus.com/forum/articles/10627/) about how c/c++ is compiled
+- Solve Problem: import a header file from other directory -> just use relative path "../targetDirectory/neededHeader.h"
+
+### ####### 18.05.2017 ####### ###
+- resolve "gpio_get_value()" / "gpio_set_value()" in LiquidCrystalFast.cpp

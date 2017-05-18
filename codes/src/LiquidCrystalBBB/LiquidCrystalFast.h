@@ -1,10 +1,10 @@
 #ifndef LiquidCrystalFast_h
 #define LiquidCrystalFast_h
 
-
 #include <inttypes.h>
-//#include './gpio/SimpleGPIO.h'
-
+//#include <unistd.h> // for usleep()
+#include <time.h>
+#include "../gpio/SimpleGPIO.h"
 
 /*
 #if defined(ARDUINO) && ARDUINO >= 100
@@ -13,12 +13,6 @@
 #include "WProgram.h"
 #endif
 */
-
-// TODO: See if this cause problem
-//enum PIN_VALUE{
-//	LOW=0,
-//	HIGH=1
-//};
 
 // commands
 #define LCD_CLEARDISPLAY 0x01
@@ -166,6 +160,12 @@ public:
 	inline void write(int n) { write((uint8_t)n); }
 #endif
 */
+	virtual void write(uint8_t);
+	inline void write(unsigned long n) { write((uint8_t)n); }
+	inline void write(long n) { write((uint8_t)n); }
+	inline void write(unsigned int n) { write((uint8_t)n); }
+	inline void write(int n) { write((uint8_t)n); }
+
 	// using Print::write;
 	void command(uint8_t);
 	void commandBoth(uint8_t);
@@ -186,7 +186,10 @@ protected:
 	void send(uint8_t, uint8_t);
 	void write4bits(uint8_t);
 	void begin2(uint8_t cols, uint8_t rows, uint8_t charsize, uint8_t chip);
-	inline void delayPerHome(void) { if (_rw_pin == 255) /*delayMicroseconds(2900)*/usleep(2900);}
+
+	/* wait 0 sec and 10^8 nanosec */
+	struct timespec ts = {0, 2900000L };
+	inline void delayPerHome(void) { if (_rw_pin == 255) nanosleep (&ts, NULL); }
 	// These are local variables that get inited when led class get inited
 	uint8_t _rs_pin;	// LOW: command.  HIGH: character.
 	uint8_t _rw_pin;	// LOW: write to LCD.  HIGH: read from LCD.

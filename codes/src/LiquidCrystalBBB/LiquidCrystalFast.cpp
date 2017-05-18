@@ -1,7 +1,8 @@
 #include "LiquidCrystalFast.h"
 #include <stdio.h>
 #include <string.h>
-#include "./gpio/SimpleGPIO.h"
+
+typedef unsigned char BYTE; // replace datatype "byte" from Arudino ecosystem. // TODO: Try to replace this specified datatype with "unit8_t"
 
 /******************************************/
 /**  hardware initialization             **/
@@ -47,24 +48,24 @@ void LiquidCrystalFast::init(
 	_data_pins[2] = d2;
 	_data_pins[3] = d3; 
 
-	gpio_set_dir(d0, OUTPUT); //set data pin modes
-	gpio_set_dir(d1, OUTPUT); 
-	gpio_set_dir(d2, OUTPUT); 
-	gpio_set_dir(d3, OUTPUT); 
+	gpio_set_dir(d0, OUTPUT_PIN); //set data pin modes
+	gpio_set_dir(d1, OUTPUT_PIN);
+	gpio_set_dir(d2, OUTPUT_PIN);
+	gpio_set_dir(d3, OUTPUT_PIN);
 
 	row_offsets[0] = 00;   // DDRAM addresses inside the HD44780 are strange: 0-nColumns-1 on line 0
 	row_offsets[1] = 0x40; // 64-(63+nColumns) for line 1
 	row_offsets[2] = 0x14; // 20- (19+nColumns) for line 2 --- NOTHING FROM 40-63 !
 	row_offsets[3] = 0x54; // 84 - (83+nColumns) for line 3  -- so 80 characters tops out at #103 !
 	
-	gpio_set_dir(_rs_pin, OUTPUT);
+	gpio_set_dir(_rs_pin, OUTPUT_PIN);
 	// we can save 1 pin by not using RW. Indicate by passing 255 instead of pin#
 	if (rw != 255) { 
-		gpio_set_dir(rw, OUTPUT);  //once in init does it
+		gpio_set_dir(rw, OUTPUT_PIN);  //once in init does it
 		gpio_set_value(rw,LOW); //write data to LCD mode
 	}
-	gpio_set_dir(_enable_pin, OUTPUT);
-	if( en2 != 255) gpio_set_dir(en2,OUTPUT);  //4X40 LCD
+	gpio_set_dir(_enable_pin, OUTPUT_PIN);
+	if( en2 != 255) gpio_set_dir(en2,OUTPUT_PIN);  //4X40 LCD
 
 	begin(20, 1); 
 	_rw_pin = rw;         //the game to initialize the 40x4 is over
@@ -105,7 +106,9 @@ void LiquidCrystalFast::begin2(uint8_t cols, uint8_t lines, uint8_t dotsize, uin
 	// is this delay long enough for all cases??
 	for (uint8_t i=0;i<18;i++) {
 		// http://stackoverflow.com/questions/1157209/is-there-an-alternative-sleep-function-in-c-to-milliseconds
-		usleep(7500);
+		struct timespec ts = {0, 7500000 };
+		nanosleep (&ts, NULL);
+		// usleep(7500);
 		// delayMicroseconds(7500);
 	}
 
@@ -124,20 +127,25 @@ void LiquidCrystalFast::begin2(uint8_t cols, uint8_t lines, uint8_t dotsize, uin
 	gpio_set_value(_rs_pin, LOW);
 	write4bits(0x03);
 	// delayMicroseconds(5000); // I have one LCD for which 4500 here was not long enough.
-	usleep(5000);
+	// usleep(5000);
+	struct timespec ts = {0, 5000000L };
+	nanosleep (&ts, NULL);
 	// second try
 	write4bits(0x03);      
 	// delayMicroseconds(150); // wait 
-	usleep(150);
+	// usleep(150);
+	ts = {0, 150000L };
+	nanosleep (&ts, NULL);
 	// third go!
 	write4bits(0x03); 
 	// delayMicroseconds(150);
-	usleep(150);
+	// usleep(150);
+	nanosleep (&ts, NULL);
 	// finally, set to 4-bit interface
 	write4bits(0x02); 
 	// delayMicroseconds(150);
-	usleep(150);
-
+	//usleep(150);
+	nanosleep (&ts, NULL);
 	
 	// finally, set # lines, font size, etc.
 	command(LCD_FUNCTIONSET | displayfunction);  
@@ -283,7 +291,7 @@ void LiquidCrystalFast::setCursor(uint8_t col, uint8_t row)         // this can 
 	offset |= high_bit;
 	if (_chip != (row & 0b10)) noCursor();  //turn off cursor on chip we are leaving
 	_chip = row & 0b10;                     //if it is row 0 or 1 this is 0; if it is row 2 or 3 this is 2
-	command(LCD_SETDDRAMADDR | (byte) offset );
+	command(LCD_SETDDRAMADDR | (BYTE) offset );
 }
 
 // This will 'right justify' text from the cursor 
@@ -322,6 +330,7 @@ void LiquidCrystalFast::commandBoth(uint8_t value)
 	}
 }
 
+// It was write method (Depending on what version of arduino are used.)
 //print calls  this to send characters to the LCD
 /*
 #if defined(ARDUINO) && ARDUINO >= 100
@@ -330,6 +339,7 @@ size_t LiquidCrystalFast::write(uint8_t value) {
 void LiquidCrystalFast::write(uint8_t value) {
 #endif
 */
+void LiquidCrystalFast::write(uint8_t value) { // TODO: I'm not clear how does this Arduino write do indeed. should check it out later
 
 	if ((_scroll_count != 0) || (_setCursFlag != 0) ) setCursor(_x,_y);   //first we call setCursor and send the character
 	if ((value != '\r') && (value != '\n') ) send(value, HIGH);
@@ -355,7 +365,8 @@ void LiquidCrystalFast::write(uint8_t value) {
 // #if defined(ARDUINO) && ARDUINO >= 100
 // 	return 1;
 // #endif
-// } // TODO: Where dose this comes from
+// }
+}
 
 
 /****************************************/
@@ -368,41 +379,46 @@ void LiquidCrystalFast::send(uint8_t value, uint8_t mode) {
 	if ((_en2 != 255) && (_chip)) en = _en2;
 	if (_rw_pin == 255) {
 		// delayMicroseconds(DELAYPERCHAR);
-		usleep(DELAYPERCHAR);
+//		usleep(DELAYPERCHAR);
+		struct timespec ts = {0, DELAYPERCHAR*1000 };
+		nanosleep (&ts, NULL);
 	} else {
-		gpio_set_dir(_data_pins[0], INPUT);
-		gpio_set_dir(_data_pins[1], INPUT);
-		gpio_set_dir(_data_pins[2], INPUT);
-		gpio_set_dir(_data_pins[3], INPUT);
+		gpio_set_dir(_data_pins[0], INPUT_PIN);
+		gpio_set_dir(_data_pins[1], INPUT_PIN);
+		gpio_set_dir(_data_pins[2], INPUT_PIN);
+		gpio_set_dir(_data_pins[3], INPUT_PIN);
 		gpio_set_value(_rw_pin, HIGH);
 		gpio_set_value(_rs_pin, LOW);
 		uint8_t busy;
 		do {
 			gpio_set_value(en, HIGH);
-			busy = digitalRead(_data_pins[3]);
+			unsigned int *bz; // tmp variable for passing read value
+			gpio_get_value(_data_pins[3], bz); // TODO: figure out if this is equal to the old one.
+//			busy = digitalRead(_data_pins[3]);
+			busy = *bz;
 			gpio_set_value(en, LOW);
 			gpio_set_value(en, HIGH);
 			gpio_set_value(en, LOW);
 		} while (busy == HIGH);
-		gpio_set_dir(_data_pins[0], OUTPUT);
-		gpio_set_dir(_data_pins[1], OUTPUT);
-		gpio_set_dir(_data_pins[2], OUTPUT);
-		gpio_set_dir(_data_pins[3], OUTPUT);
+		gpio_set_dir(_data_pins[0], OUTPUT_PIN);
+		gpio_set_dir(_data_pins[1], OUTPUT_PIN);
+		gpio_set_dir(_data_pins[2], OUTPUT_PIN);
+		gpio_set_dir(_data_pins[3], OUTPUT_PIN);
 		gpio_set_value(_rw_pin, LOW);
 	}
-	gpio_set_value(_rs_pin, mode);
+	gpio_set_value(_rs_pin, mode == 1 ? HIGH : LOW);
 
-	gpio_set_value(_data_pins[0], value & 0x10);
-	gpio_set_value(_data_pins[1], value & 0x20);
-	gpio_set_value(_data_pins[2], value & 0x40);
-	gpio_set_value(_data_pins[3], value & 0x80);
+	gpio_set_value(_data_pins[0], (value & 0x10) == 1 ? HIGH : LOW);
+	gpio_set_value(_data_pins[1], (value & 0x20) == 1 ? HIGH : LOW);
+	gpio_set_value(_data_pins[2], (value & 0x40) == 1 ? HIGH : LOW);
+	gpio_set_value(_data_pins[3], (value & 0x80) == 1 ? HIGH : LOW);
 	gpio_set_value(en, HIGH);   // enable pulse must be >450ns
 	gpio_set_value(en, LOW);
 
-	gpio_set_value(_data_pins[0], value & 0x01);
-	gpio_set_value(_data_pins[1], value & 0x02);
-	gpio_set_value(_data_pins[2], value & 0x04);
-	gpio_set_value(_data_pins[3], value & 0x08);
+	gpio_set_value(_data_pins[0], (value & 0x01) == 1 ? HIGH : LOW);
+	gpio_set_value(_data_pins[1], (value & 0x02) == 1 ? HIGH : LOW);
+	gpio_set_value(_data_pins[2], (value & 0x04) == 1 ? HIGH : LOW);
+	gpio_set_value(_data_pins[3], (value & 0x08) == 1 ? HIGH : LOW);
 	gpio_set_value(en, HIGH);   // enable pulse must be >450ns
 	gpio_set_value(en, LOW);
 }
@@ -412,11 +428,12 @@ void LiquidCrystalFast::write4bits(uint8_t value)
 {
 	uint8_t v=value;
 	uint8_t *pinptr = _data_pins;
-	gpio_set_value(*pinptr++, v & 1 );
-	gpio_set_value(*pinptr++,( v >>= 1) & 1 );
-	gpio_set_value(*pinptr++,( v >>= 1) & 1 );
-	gpio_set_value(*pinptr++,( v >>= 1) & 1 );
-	byte en = _enable_pin;
+	gpio_set_value(*pinptr++, (v & 1) == 1 ? HIGH : LOW );
+	gpio_set_value(*pinptr++, (( v >>= 1) & 1) == 1 ? HIGH : LOW );
+	gpio_set_value(*pinptr++, (( v >>= 1) & 1) == 1 ? HIGH : LOW );
+	gpio_set_value(*pinptr++, (( v >>= 1) & 1) == 1 ? HIGH : LOW );
+//	byte en = _enable_pin;
+	BYTE en = _enable_pin;
 	if ((_en2 != 255) && (_chip)) en = _en2;    // 4x40 LCD with 2 controller chips with separate enable lines if we called w 2 enable pins and are on lines 2 or 3 enable chip 2  
 	gpio_set_value(en, HIGH);   // enable pulse must be >450ns
 	gpio_set_value(en, LOW);
