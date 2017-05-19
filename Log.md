@@ -66,3 +66,5 @@ Build-Up cross-compile toolchain for deploying software from Eclipse to Beaglebo
 ```
 class LiquidCrystalFast : public Print { ... }
 ```
+### ####### 19.05.2017 ####### ###
+- Early Morning of this day, figure out how to setup debugger session (cross-compile) on Eclipse
