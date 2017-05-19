@@ -4,6 +4,9 @@ This is the ***Dairy*** of this Project. Visit [**my website**](http://www.gao-s
 
 ## TODO ##
 
+/ **Alex**: In Eclipse: On Project's name -Right Mouse-> Index -> Rebuild
+/ On _HD44780.pdf_ Page:42 is a example instruction on how to use 4 bit mode control this display
+/ On _HD44780.pdf_ Page:46 _Figure 24_ 4-Bit Interface initialization
 / Build up the "Hello World!" Sketch that control HD44780 directly
 - sketch this code
 - compile it without error
