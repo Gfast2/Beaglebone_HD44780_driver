@@ -1,19 +1,11 @@
 # **LOG**
 ---
-This is the ***Dairy*** of this Project. Visit [**my website**](http://www.gao-su.com) for more information.
+This is the **Dairy** of this Project. Visit [**my website**](http://www.gao-su.com) for more information.
 
 ## TODO ##
 
-/ Build up the "Hello World!" Sketch that control HD44780 directly
-- sketch this code
-- compile it without error
-- **LOG**: LiquidCrystalFast.cpp are using function from SimpleGPIO.cpp, It just can't.
-- **PS**: 
-
-/ Hook up all wires
-- Hook
-- Test all connections with scope & code sketch of above
-
+Check if all GPIO still alive
+- 
 ## FINISHED ##
 
 ### ####### 13.05.2017 ####### ###
@@ -66,3 +58,20 @@ Build-Up cross-compile toolchain for deploying software from Eclipse to Beaglebo
 ```
 class LiquidCrystalFast : public Print { ... }
 ```
+### ####### 19.05.2017 ####### ###
+
+Tip of the day: (From _Marion_) 
+
+- build a dummy init() that configure the display correctely (into 4-bit mode, possibly after this there would be a blinking cursor)
+- build a dummy begin() that do somehow the same thing as init().
+- build the circuit
+- build a dummy that display somehow some character
+- **ps**: All of above shouold happen in main.cpp firstly 
+
+### ####### 20.05.2017 ####### ###
+
+try to init the display
+- figure out how to get "cin" and get read the input
+- display the pin status on each step (step by step do the diagnose)
+- set it into 4 bit mode & turn on the blinking cursor
+

@@ -56,7 +56,7 @@
 
 #define DELAYPERCHAR 320
 
-class LiquidCrystalFast : public Print {
+class LiquidCrystalFast : public Print { // TODO: remove class Print (from Arduino, figure out what does it do (or just nothing, @Paul))
 public:
 	// 6 pin connection (slow): normal LCD, single HD44780 controller
 	LiquidCrystalFast(
