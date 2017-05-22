@@ -4,8 +4,6 @@ This is the **Dairy** of this Project. Visit [**my website**](http://www.gao-su.
 
 ## TODO ##
 
-Check if all GPIO still alive
-- 
 ## FINISHED ##
 
 ### ####### 13.05.2017 ####### ###
@@ -59,14 +57,20 @@ Build-Up cross-compile toolchain for deploying software from Eclipse to Beaglebo
 class LiquidCrystalFast : public Print { ... }
 ```
 ### ####### 19.05.2017 ####### ###
-
 Tip of the day: (From _Marion_) 
-
 - build a dummy init() that configure the display correctely (into 4-bit mode, possibly after this there would be a blinking cursor)
 - build a dummy begin() that do somehow the same thing as init().
 - build the circuit
 - build a dummy that display somehow some character
 - **ps**: All of above shouold happen in main.cpp firstly 
+/ **Alex**: In Eclipse: On Project's name -Right Mouse-> Index -> Rebuild
+/ On _HD44780.pdf_ Page:42 is a example instruction on how to use 4 bit mode control this display
+/ On _HD44780.pdf_ Page:46 _Figure 24_ 4-Bit Interface initialization
+/ Build up the "Hello World!" Sketch that control HD44780 directly
+- sketch this code
+- compile it without error
+- **LOG**: LiquidCrystalFast.cpp are using function from SimpleGPIO.cpp, It just can't.
+- Early Morning of this day, figure out how to setup debugger session (cross-compile) on Eclipse
 
 ### ####### 20.05.2017 ####### ###
 
