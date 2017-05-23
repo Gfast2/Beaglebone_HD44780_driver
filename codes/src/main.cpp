@@ -71,7 +71,9 @@ void setModeWrite(){
 	gpio_set_value(GPIO[1], LOW);
 }
 
-//void setRegister
+void setRegisterSelectHIGH(){
+	gpio_set_value(GPIO[0], HIGH);
+}
 
 int main(int argc, char *argv[]) {
 
@@ -160,6 +162,35 @@ int main(int argc, char *argv[]) {
 
 	cout << "==== ALL FINISHED ====" << endl;
 
-	return 0;
 
+	// Get the info from PDF "HDD44780.pdf", page 42
+	cout << "==== TRY TO DISPLAY LATTER H ====" << endl;
+	setRegisterSelectHIGH();
+	setData(0b0100);
+	if (cin.get() == '\n') cout << "go on." << endl;
+	send();
+	cout << "==== FINISH SENDING ====" << endl;
+
+	cout << "==== TRY TO DISPLAY LATTER H (PART 2) ====" << endl;
+	setData(0b1000);
+	if (cin.get() == '\n') cout << "go on." << endl;
+	send();
+	cout << "==== FINISH SENDING ====" << endl;
+
+	// Test preprogrammed stuff in this HD447870 display module
+	cout << "==== TRY TO DISPLAY LATTER ? ====" << endl;
+	setRegisterSelectHIGH();
+	setData(0b1011);
+	if (cin.get() == '\n') cout << "go on." << endl;
+	send();
+	cout << "==== FINISH SENDING ====" << endl;
+
+	cout << "==== TRY TO DISPLAY LATTER ? (PART 2) ====" << endl;
+	setData(0b0110);
+	if (cin.get() == '\n') cout << "go on." << endl;
+	send();
+	cout << "==== FINISH SENDING ====" << endl;
+
+	return 0;
+	// TODO: Design a function time read the BF (Busy-Flag)
 }
