@@ -61,6 +61,18 @@ void setData(uint8_t data) { // Argument is a 4bit instruction set
 
 }
 
+// Display GPIO read
+void setModeRead(){
+	gpio_set_value(GPIO[1], HIGH);
+}
+
+// Display GPIO write
+void setModeWrite(){
+	gpio_set_value(GPIO[1], LOW);
+}
+
+//void setRegister
+
 int main(int argc, char *argv[]) {
 
 	cout << "Testing the GPIO Pins!" << endl;
@@ -86,6 +98,12 @@ int main(int argc, char *argv[]) {
 	if (cin.get() == '\n') cout << "go on." << endl; // This will hack the program till the user press enter key to going on
 	send();
 	cout << "==== FINISH SENDING ====" << endl;
+
+//	cout << " === INIT STEP ONE: TURN TO 4-BIT MODE (second part of this command (for this command, this 4-bit are dummy))===" << endl;
+//	setData(0b0000);
+//	if (cin.get() == '\n') cout << "go on." << endl; // This will hack the program till the user press enter key to going on
+//	send();
+//	cout << "==== FINISH SENDING ====" << endl;
 
 	cout << "==== INIT STEP TWO: FUNCTION SET ====" << endl;
 	setData(0b0010);
