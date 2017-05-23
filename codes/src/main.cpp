@@ -59,10 +59,6 @@ void setData(uint8_t data) { // Argument is a 4bit instruction set
 	gpio_set_value(GPIO[5], ((data & 0b0100) != 0 ? HIGH : LOW));
 	gpio_set_value(GPIO[6], ((data & 0b1000) != 0 ? HIGH : LOW));
 
-//	gpio_set_value(GPIO[3], LOW);
-//	gpio_set_value(GPIO[4], HIGH);
-//	gpio_set_value(GPIO[5], LOW);
-//	gpio_set_value(GPIO[6], LOW);
 }
 
 int main(int argc, char *argv[]) {
@@ -71,7 +67,7 @@ int main(int argc, char *argv[]) {
 	initPinMode();
 
 	cout << "Flashing High/Low of each pin" << endl;
-	// Flash the LED pin 10 times
+	// Flash the LED pin 5 times
 	for (int i = 0; i < 5; i++) {
 		cout << "Setting the PIN on" << endl;
 		for (int i = 0; i < 7; i++) {
@@ -87,40 +83,62 @@ int main(int argc, char *argv[]) {
 
 	cout << " === INIT STEP ONE: TURN TO 4-BIT MODE (TEST DATA PIN WITH SCOPE NOW)===" << endl;
 	setData(0b0010);
-	if (cin.get() == '\n') cout << "go on." << endl;
+	if (cin.get() == '\n') cout << "go on." << endl; // This will hack the program till the user press enter key to going on
 	send();
 	cout << "==== FINISH SENDING ====" << endl;
+
 	cout << "==== INIT STEP TWO: FUNCTION SET ====" << endl;
 	setData(0b0010);
 	if (cin.get() == '\n') cout << "go on." << endl;
 	send();
+	cout << "==== FINISH SENDING ====" << endl;
+
+	cout << "==== INIT STEP TWO: FUNCTION SET (second part of this command) ====" << endl;
 	setData(0b1000);
 	if (cin.get() == '\n') cout << "go on." << endl;
 	send();
+	cout << "==== FINISH SENDING ====" << endl;
+
 	cout << "==== INIT STEP THREE: DISPLAY ON/OFF ====" << endl;
 	setData(0b0000);
 	if (cin.get() == '\n') cout << "go on." << endl;
 	send();
+	cout << "==== FINISH SENDING ====" << endl;
+
+	cout << "==== INIT STEP THREE: DISPLAY ON/OFF (second part of this command) ====" << endl;
 	setData(0b1111);
 	if (cin.get() == '\n') cout << "go on." << endl;
 	send();
+	cout << "==== FINISH SENDING ====" << endl;
+
 	cout << "==== INIT STEP FOUR: CLEAR DISPLAY ====" << endl;
-	if (cin.get() == '\n') cout << "go on." << endl;
 	setData(0b0000);
 	if (cin.get() == '\n') cout << "go on." << endl;
+	send();
+	cout << "==== FINISH SENDING ====" << endl;
+
+	cout << "==== INIT STEP FOUR: CLEAR DISPLAY (second part of this command) ====" << endl;
 	setData(0b0001);
-	cout << "==== INIT STEP FIVE: ENTRY> MODE SET ====" << endl;
 	if (cin.get() == '\n') cout << "go on." << endl;
+	send();
+	cout << "==== FINISH SENDING ====" << endl;
+
+
+	cout << "==== INIT STEP FIVE: ENTRY> MODE SET ====" << endl;
 	setData(0b0000);
 	if (cin.get() == '\n') cout << "go on." << endl;
+	send();
+	cout << "==== FINISH SENDING ====" << endl;
+
+	cout << "==== INIT STEP FIVE: ENTRY> MODE SET (second part of this command) ====" << endl;
 	setData(0b0110);
+	if (cin.get() == '\n') cout << "go on." << endl;
+	send();
+	cout << "==== FINISH SENDING ====" << endl;
 
-
-	// This will hack the programm till the user press enter key to going on
+	cout << "And now all init steps are finished, press Enter to finish the init process" << endl;
 	if (cin.get() == '\n')
-		cout << "Enter key get pressed." << endl;
-
-//	cout << "==== FINISH ====" << endl;
+		cout << "go on." << endl;
 
 	cout << "==== ALL FINISHED ====" << endl;
 
