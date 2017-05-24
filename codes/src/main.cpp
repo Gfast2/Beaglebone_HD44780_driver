@@ -17,7 +17,7 @@
 using namespace std;
 
 // gpio number on Beaglebone
-//                       rs, rw, en, d5, d6, d7, d8
+//                       rs, rw, en, d4, d5, d6, d7
 unsigned int GPIO[7] = { 66, 67, 69, 68, 45, 44, 26 };
 
 void initPinMode() {
@@ -38,7 +38,6 @@ void send() {
 }
 
 void setData(uint8_t data) { // Argument is a 4bit instruction set
-
 
 #define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
 
@@ -75,7 +74,36 @@ void setRegisterSelectHIGH(){
 	gpio_set_value(GPIO[0], HIGH);
 }
 
+// get busy flag state in 4bit mode
+bool getBF(){
+
+	usleep(1);
+	setModeRead();
+	gpio_set_dir(GPIO[6], INPUT_PIN);
+
+	unsigned int bf = 1000;
+
+	gpio_set_value(GPIO[2], HIGH);
+	usleep(5); // the minimum time is 450 nano second, here I do 5000 nano sec.
+	gpio_get_value(GPIO[6], &bf);
+	gpio_set_value(GPIO[2], LOW);
+	usleep(1);
+
+	gpio_set_value(GPIO[2], HIGH);
+	usleep(5); // the minimum time is 450 nano second, here I do 5000 nano sec.
+	gpio_set_value(GPIO[2], LOW);
+	usleep(1);
+
+	setModeWrite();
+	gpio_set_dir(GPIO[6], OUTPUT_PIN);
+
+	cout << "++++ The BF now is: " << bf << " ++++"<< endl;
+	return true;
+}
+
 int main(int argc, char *argv[]) {
+
+	cout << "convert char to its ascii. \'a\' -> " << (int)'a' << endl; // Yes, this is the way how to convert a char into its ascii code. This display module can understand it correctly.
 
 	cout << "Testing the GPIO Pins!" << endl;
 	initPinMode();
@@ -85,7 +113,7 @@ int main(int argc, char *argv[]) {
 	for (int i = 0; i < 5; i++) {
 		cout << "Setting the PIN on" << endl;
 		for (int i = 0; i < 7; i++) {
-			gpio_set_value(GPIO[i], HIGH);
+//			gpio_set_value(GPIO[i], HIGH);
 		}
 		usleep(50000); // on for 50ms
 		cout << "Setting the PIN off" << endl;
@@ -101,11 +129,7 @@ int main(int argc, char *argv[]) {
 	send();
 	cout << "==== FINISH SENDING ====" << endl;
 
-//	cout << " === INIT STEP ONE: TURN TO 4-BIT MODE (second part of this command (for this command, this 4-bit are dummy))===" << endl;
-//	setData(0b0000);
-//	if (cin.get() == '\n') cout << "go on." << endl; // This will hack the program till the user press enter key to going on
-//	send();
-//	cout << "==== FINISH SENDING ====" << endl;
+	getBF();
 
 	cout << "==== INIT STEP TWO: FUNCTION SET ====" << endl;
 	setData(0b0010);
@@ -119,6 +143,8 @@ int main(int argc, char *argv[]) {
 	send();
 	cout << "==== FINISH SENDING ====" << endl;
 
+	getBF();
+
 	cout << "==== INIT STEP THREE: DISPLAY ON/OFF ====" << endl;
 	setData(0b0000);
 	if (cin.get() == '\n') cout << "go on." << endl;
@@ -130,6 +156,8 @@ int main(int argc, char *argv[]) {
 	if (cin.get() == '\n') cout << "go on." << endl;
 	send();
 	cout << "==== FINISH SENDING ====" << endl;
+
+	getBF();
 
 	cout << "==== INIT STEP FOUR: CLEAR DISPLAY ====" << endl;
 	setData(0b0000);
@@ -143,6 +171,7 @@ int main(int argc, char *argv[]) {
 	send();
 	cout << "==== FINISH SENDING ====" << endl;
 
+	getBF();
 
 	cout << "==== INIT STEP FIVE: ENTRY> MODE SET ====" << endl;
 	setData(0b0000);
@@ -155,6 +184,8 @@ int main(int argc, char *argv[]) {
 	if (cin.get() == '\n') cout << "go on." << endl;
 	send();
 	cout << "==== FINISH SENDING ====" << endl;
+
+	getBF();
 
 	cout << "And now all init steps are finished, press Enter to finish the init process" << endl;
 	if (cin.get() == '\n')
@@ -177,6 +208,10 @@ int main(int argc, char *argv[]) {
 	send();
 	cout << "==== FINISH SENDING ====" << endl;
 
+	gpio_set_value(GPIO[0], LOW);
+	getBF();
+	gpio_set_value(GPIO[0], HIGH);
+
 	// Test preprogrammed stuff in this HD447870 display module
 	cout << "==== TRY TO DISPLAY LATTER ? ====" << endl;
 	setRegisterSelectHIGH();
@@ -185,11 +220,16 @@ int main(int argc, char *argv[]) {
 	send();
 	cout << "==== FINISH SENDING ====" << endl;
 
+
 	cout << "==== TRY TO DISPLAY LATTER ? (PART 2) ====" << endl;
 	setData(0b0110);
 	if (cin.get() == '\n') cout << "go on." << endl;
 	send();
 	cout << "==== FINISH SENDING ====" << endl;
+
+	gpio_set_value(GPIO[0], LOW);
+	getBF();
+	gpio_set_value(GPIO[0], HIGH);
 
 	return 0;
 	// TODO: Design a function time read the BF (Busy-Flag)

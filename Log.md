@@ -84,3 +84,9 @@ today I write a big scaffold to walk through the initiation of the display.
 - ps: It's with out Busy-Flag checking
 - ps: Display will not initiated correctly on the second time of the same instruction set. But the third time everything goes well again. (every two times)
 - ps: in pdf "4_16.pdf" on page 4 state: Im 4-Bit Mode ist die Busy-Abfrage vor jedem Bytezugriff notwendig.
+
+### ####### 22.05.2017 ####### ###
+Add the Busy-Flag read function in 4bit mode
+try to figure out how to parse input as char[] and display them respectively
+
+
