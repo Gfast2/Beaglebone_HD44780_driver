@@ -4,6 +4,8 @@ This is the **Dairy** of this Project. Visit [**my website**](http://www.gao-su.
 
 ## TODO ##
 
+Add the function that print "print"
+
 ## FINISHED ##
 
 ### ####### 13.05.2017 ####### ###
