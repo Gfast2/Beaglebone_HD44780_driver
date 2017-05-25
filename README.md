@@ -54,3 +54,5 @@ TODO: Fork this repo, pulling some requests to it:
 / Add new settings for beaglebone black in "i2c_functions.c"
 
 [here](http://gnutoolchains.com/beaglebone/) I can find some usefull cross-compile-tool-chain for Windows user 
+
+[The Linux Kernel Module Programming Guide (/proc File System)](http://www.tldp.org/LDP/lkmpg/2.6/html/lkmpg.html#AEN121) are virtual file system that contain system runtime informations & let user modify these parameters

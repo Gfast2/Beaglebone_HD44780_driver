@@ -231,6 +231,31 @@ int main(int argc, char *argv[]) {
 	getBF();
 	gpio_set_value(GPIO[0], HIGH);
 
+
+
+
+
+	// Test preprogrammed stuff in this HD447870 display module
+	cout << "==== TRY TO DISPLAY LATTER a ====" << endl;
+	setRegisterSelectHIGH();
+	setData(( ((int)'a') & 0b11110000) >> 4);
+	if (cin.get() == '\n') cout << "go on." << endl;
+	send();
+	cout << "==== FINISH SENDING ====" << endl;
+
+
+	cout << "==== TRY TO DISPLAY LATTER a (PART 2) ====" << endl;
+	setData(( ((int)'a') & 0b00001111));
+	if (cin.get() == '\n') cout << "go on." << endl;
+	send();
+	cout << "==== FINISH SENDING ====" << endl;
+
+	gpio_set_value(GPIO[0], LOW);
+	getBF();
+	gpio_set_value(GPIO[0], HIGH);
+
+
+
 	return 0;
 	// TODO: Design a function time read the BF (Busy-Flag)
 }
