@@ -16,8 +16,6 @@
 #include <typeinfo>
 using namespace std;
 
-// TODO: add a while loop to check the Busy-Flag permanently until BF show the display built-in MPU is free again
-
 // gpio number on Beaglebone
 // pin name:			 RS  RW  EN  D4  D5  D6  D7
 unsigned int GPIO[7] = { 66, 67, 69, 68, 45, 44, 26 };
@@ -44,11 +42,10 @@ void send() {
 void setData(uint8_t data) { // Argument is a 4bit instruction set
 
 #define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
-	const int w = CHECK_BIT(data, 0);
-	const int a = CHECK_BIT(data, 1);
-	const int b = CHECK_BIT(data, 2);
-	const int c = CHECK_BIT(data, 3);
-
+//	const int w = CHECK_BIT(data, 0);
+//	const int a = CHECK_BIT(data, 1);
+//	const int b = CHECK_BIT(data, 2);
+//	const int c = CHECK_BIT(data, 3);
 //	printf("bits: 1 2 3 4\n");
 //	printf("      %u %u %u %u\n", w, a, b, c );
 
@@ -72,6 +69,10 @@ void setModeWrite(){
 
 void setRS_HIGH(){
 	gpio_set_value(GPIO[0], HIGH);
+}
+
+void setRS_LOW(){
+	gpio_set_value(GPIO[0], LOW);
 }
 
 // get busy flag state in 4bit mode
@@ -99,6 +100,28 @@ bool getBF(){
 	}
 	gpio_set_dir(GPIO[6], OUTPUT_PIN);
 	return true;
+}
+
+// Set the position of the cursor, "Set CGRAM addresss"
+void moveCursor(unsigned int p){
+	setRS_LOW();
+	setModeWrite();
+
+	// Hard coded position: -> 5 ( start from 0)
+	setData(0b1000); send();
+	setData(0b0101); send();
+
+	if (cin.get() == '\n') cout << "." << endl;
+
+	setData(0b1010); send();
+	setData(0b1001); send(); // The second character on the second line
+
+//	if (cin.get() == '\n') cout << "." << endl;
+//
+//	setData(0b1101); send();
+//	setData(0b0001); send(); // The second character on the second line
+
+	getBF(); // TODO: I believe I have some interesting problem: For each new command, I check the BF but not after each executed function
 }
 
 void displayChar(char c){
@@ -137,46 +160,37 @@ void clear(){
 
 int main(int argc, char *argv[]) {
 
-	cout << "INIT PIN STATE" << endl;
+	cout << "=== INIT PIN STATE ===" << endl;
 	initPinMode();
 
-	cout << " === INIT STEP ONE: TURN TO 4-BIT MODE (TEST DATA PIN WITH SCOPE NOW)===" << endl;
+	cout << "=== INIT STEP ONE: TURN TO 4-BIT MODE ===" << endl;
 	setModeWrite();
-	setData(0b0010);
-//	if (cin.get() == '\n') cout << "." << endl; // This will hack the program till the user press enter key to going on
-	send();
+	setData(0b0010); send();
+	setData(0b1000); send();
 	getBF();
 
 	cout << "==== INIT STEP TWO: FUNCTION SET ====" << endl;
 	setModeWrite();
-	setData(0b0010);
-	send();
-	setData(0b1000);
-	send();
+	setData(0b0010); send();
+	setData(0b1000); send();
 	getBF();
 
 	cout << "==== INIT STEP THREE: DISPLAY ON/OFF ====" << endl;
 	setModeWrite();
-	setData(0b0000);
-	send();
-	setData(0b1111);
-	send();
+	setData(0b0000); send();
+	setData(0b1111); send();
 	getBF();
 
 	cout << "==== INIT STEP FOUR: CLEAR DISPLAY ====" << endl;
 	setModeWrite();
-	setData(0b0000);
-	send();
-	setData(0b0001);
-	send();
+	setData(0b0000); send();
+	setData(0b0001); send();
 	getBF();
 
 	cout << "==== INIT STEP FIVE: ENTRY> MODE SET ====" << endl;
 	setModeWrite();
-	setData(0b0000);
-	send();
-	setData(0b0110);
-	send();
+	setData(0b0000); send();
+	setData(0b0110); send();
 	getBF();
 
 	cout << "And now all init steps are finished, press Enter to finish the init process" << endl;
@@ -184,11 +198,17 @@ int main(int argc, char *argv[]) {
 	if (cin.get() == '\n') cout << "." << endl;
 
 	setModeWrite();
-	print("12345678901234567890");
+	print("123456789 123456789 ");
 	getBF();
 
 	// Clear display
-	clear();
+//	clear();
+
+	moveCursor(5);
+
+	print("Hallo Qiao!");
 
 	return 0;
 }
+
+//	if (cin.get() == '\n') cout << "." << endl; // This will hack the program till the user press enter key to going on
