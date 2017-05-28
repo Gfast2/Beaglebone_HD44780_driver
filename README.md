@@ -56,3 +56,5 @@ TODO: Fork this repo, pulling some requests to it:
 [here](http://gnutoolchains.com/beaglebone/) I can find some usefull cross-compile-tool-chain for Windows user 
 
 [The Linux Kernel Module Programming Guide (/proc File System)](http://www.tldp.org/LDP/lkmpg/2.6/html/lkmpg.html#AEN121) are virtual file system that contain system runtime informations & let user modify these parameters
+
+[Dincer's JavaScript LCD Simulator](http://www.dinceraydin.com/djlcdsim/djlcdsim.html)
