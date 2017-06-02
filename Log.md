@@ -91,4 +91,4 @@ today I write a big scaffold to walk through the initiation of the display.
 Add the Busy-Flag read function in 4bit mode
 try to figure out how to parse input as char[] and display them respectively
 
-
+### ####### 02.06.2017 ####### ###

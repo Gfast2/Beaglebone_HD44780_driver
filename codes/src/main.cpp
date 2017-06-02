@@ -34,6 +34,7 @@ void initPinMode() {
 // 		 Put this pin high before I change datas on DB pins
 // 		 Put this pin low that is acutally what "send()" means
 void send() {
+	usleep(1); // the minimum time is 450 nano second, here I do 5000 nano sec.
 	gpio_set_value(GPIO[2], HIGH);
 	usleep(5); // the minimum time is 450 nano second, here I do 5000 nano sec.
 	gpio_set_value(GPIO[2], LOW);
@@ -42,19 +43,18 @@ void send() {
 void setData(uint8_t data) { // Argument is a 4bit instruction set
 
 #define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
-//	const int w = CHECK_BIT(data, 0);
-//	const int a = CHECK_BIT(data, 1);
-//	const int b = CHECK_BIT(data, 2);
-//	const int c = CHECK_BIT(data, 3);
-//	printf("bits: 1 2 3 4\n");
-//	printf("      %u %u %u %u\n", w, a, b, c );
+	const int w = CHECK_BIT(data, 0);
+	const int a = CHECK_BIT(data, 1);
+	const int b = CHECK_BIT(data, 2);
+	const int c = CHECK_BIT(data, 3);
+	printf("bits: 1 2 3 4\n");
+	printf("      %u %u %u %u\n", w, a, b, c );
 
 	// I literally spend 90% time of the night on figuring out the priority issue here...
 	gpio_set_value(GPIO[3], ((data & 0b0001) != 0 ? HIGH : LOW));
 	gpio_set_value(GPIO[4], ((data & 0b0010) != 0 ? HIGH : LOW));
 	gpio_set_value(GPIO[5], ((data & 0b0100) != 0 ? HIGH : LOW));
 	gpio_set_value(GPIO[6], ((data & 0b1000) != 0 ? HIGH : LOW));
-
 }
 
 // Display GPIO read
@@ -77,8 +77,7 @@ void setRS_LOW(){
 
 // get busy flag state in 4bit mode
 bool getBF(){
-
-//	usleep(1);
+	usleep(1);
 	setModeRead();
 	gpio_set_value(GPIO[0], LOW);
 	gpio_set_dir(GPIO[6], INPUT_PIN);
@@ -89,9 +88,7 @@ bool getBF(){
 		usleep(5); // the minimum time is 450 nano second, here I do 5000 nano sec.
 		gpio_get_value(GPIO[6], &bf);
 		gpio_set_value(GPIO[2], LOW);
-
 		usleep(1);
-
 		gpio_set_value(GPIO[2], HIGH);
 		usleep(5); // the minimum time is 450 nano second, here I do 5000 nano sec.
 		gpio_set_value(GPIO[2], LOW);
@@ -135,7 +132,7 @@ void displayChar(char c){
 	getBF();
 }
 
-int print(string str){ // datatype from c++
+int print(string str){
 	cout << "RPINT PASSED IN STRING: " << str << endl;
 	unsigned int _rs = 1000;
 	gpio_get_value(GPIO[0], &_rs); // TODO: should I set this pin as input when asking its state?
@@ -202,7 +199,7 @@ int main(int argc, char *argv[]) {
 	getBF();
 
 	// Clear display
-//	clear();
+	clear();
 
 	moveCursor(5);
 
