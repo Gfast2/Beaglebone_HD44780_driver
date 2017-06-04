@@ -15,6 +15,8 @@
 #include "./gpio/SimpleGPIO.h"
 #include <typeinfo>
 
+#include <time.h> // Get systemtime
+
 using namespace std;
 
 // For "better sleep":
@@ -40,7 +42,7 @@ void initPinMode() {
 // This way is far slower then it should (see datasheet)
 void send() {
 	gpio_set_value(GPIO[2], HIGH);
-	usleep(500); // the minimum time is 450 nano second, here I do 500 micro second
+	usleep(1); // the minimum time is 450 nano second, here I do 500 micro second
 	gpio_set_value(GPIO[2], LOW);
 }
 
@@ -62,6 +64,7 @@ void setModeWrite(){
 	gpio_set_value(GPIO[1], LOW);
 }
 
+// High -> writing charactor
 void setRS_HIGH(){
 	gpio_set_value(GPIO[0], HIGH);
 }
@@ -80,39 +83,28 @@ bool getBF(){
 	// Do this checking in while loop till BF is get LOW -> 0 again
 	while(bf != 0){
 		gpio_set_value(GPIO[2], HIGH);
-		usleep(500); // the minimum time is 450 nano second, here I do 5000 nano sec.
-//		sleep_for( nanoseconds(1000) );
+		usleep(1); // the minimum time is 450 nano second, here I do 1000 nano sec.
 		gpio_get_value(GPIO[6], &bf);
 		gpio_set_value(GPIO[2], LOW);
-		usleep(100);
+		usleep(1);
 		gpio_set_value(GPIO[2], HIGH);
-		usleep(500); // the minimum time is 450 nano second, here I do 5000 nano sec.
-//		sleep_for( nanoseconds(1000) );
+		usleep(1);
 		gpio_set_value(GPIO[2], LOW);
 		usleep(100);
-		cout << "++++ BF: " << bf << " ++++"<< endl;
+		if(bf != 0)
+		{
+			cout << "++++ BF: " << bf << " ++++"<< endl;
+		}
 	}
 	gpio_set_dir(GPIO[6], OUTPUT_PIN);
 	return true;
-}
-
-// Human understandable position (0 -> characterPerLine x Line - 1)
-int positionTrans(int p){
-	const int h=16, l=2; // TODO: These settings should be placed somewhere else
-	if(p < h){
-		return p - 1;
-	} else if(p > h*l){
-		return 41 + h - 1;
-	}
-	return 41 + p - 16 - 1;
 }
 
 void sendData(int data) {
 	setModeWrite();
 	setData( (data&0xF0)>>4 ); send();
 	setData(  data&0x0F     ); send();
-	usleep(5);
-	printf("In com data in sendData: %d\n", data);
+	usleep(1);
 	getBF();
 }
 
@@ -125,18 +117,13 @@ void clear(){
 }
 
 void displayChar(char c){
-	cout << "==== DISPLAYCHAR() ====" << endl;
-	setRS_HIGH(); // For writing
-	setModeWrite();
+	setRS_HIGH();
 	sendData( (int)c );
 }
 
 int print(string str){
-	cout << "RPINT PASSED IN STRING: " << str << endl;
-	unsigned int _rs = 1000;
-	gpio_get_value(GPIO[0], &_rs); // TODO: should I set this pin as input when asking its state?
-	setRS_HIGH();
-	for(unsigned int i=0; i<str.length(); i++){
+	for(unsigned int i=0; i<str.length(); i++)
+	{
 		displayChar(str.at(i));
 	}
 	return 0;
@@ -146,19 +133,17 @@ int print(string str){
 void moveCursor(unsigned int p){
 	setRS_LOW();
 	setModeWrite();
-	//	int finalPosi = 0b10000000 | hdPosition;
 
 	// Hard coded position: -> 5 ( start from 0)
 	setData(0b1000); send();
 	setData(0b0101); send();
 
-	if (cin.get() == '\n') cout << "." << endl;
 
 	// The first character on the second line -> 41
 	setData(0b1010); send();
 	setData(0b1001); send();
 
-	if (cin.get() == '\n') cout << "." << endl;
+//	if (cin.get() == '\n') cout << "." << endl;
 }
 
 int main(int argc, char *argv[]) {
@@ -175,13 +160,19 @@ int main(int argc, char *argv[]) {
 	setModeWrite(); // Make sure rw pin low
 	setRS_LOW(); // Make sure rs pin low
 
-	setData(0b0010);
-	if (cin.get() == '\n') cout << "Press Enter to send 4-bit mode command (very beginning)" << endl;
-	send();
+	cout << "Press Enter to send 4-bit mode command (very beginning)" << endl;
+	if (cin.get() == '\n') cout << "." << endl;
 
-//	setData(0b1000); send();
-//	sendData(0b00101000);
-//	getBF();
+	// http://sprut.de/electronic/lcd/
+	// In order to init as 4-bit mode, I've to "reinit" a in 4-bit mode display
+	// back to 8-bit mode first (then, init it back to 4-bit mode)
+	setData(0b0011); send();
+	usleep(4500);
+	setData(0b0011); send();
+	usleep(200);
+	setData(0b0011); send();
+	setData(0b0010); send();
+	getBF();
 
 	cout << "==== INIT STEP TWO: FUNCTION SET ====" << endl;
 	sendData(0b00101000);
@@ -197,8 +188,8 @@ int main(int argc, char *argv[]) {
 
 	cout << "And now all init steps are finished, press Enter to finish the init process" << endl;
 	cout << "==== ALL FINISHED ====" << endl;
-	if (cin.get() == '\n') cout << "." << endl;
 
+	if (cin.get() == '\n') cout << "." << endl;
 	setModeWrite();
 	print("123456789 123456789 ");
 
@@ -210,7 +201,27 @@ int main(int argc, char *argv[]) {
 
 	if (cin.get() == '\n') cout << "." << endl;
 	moveCursor(5);
+	clear();
 	print("Hallo Qiao!");
+
+	sleep(2);
+	clear();
+
+	for( ;; )
+	{
+		time_t t = time(NULL);
+		struct tm tm = *localtime(&t);
+		printf("now: %d-%d-%d %d:%d:%d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+		moveCursor(5);
+
+		uint8_t time_buffer_size = 20;
+		char time_buffer[time_buffer_size];
+		snprintf(time_buffer, time_buffer_size, "%d-%d %d:%d:%d\n", tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+		string timeStr(time_buffer); // cast a char array -> c++ string
+		print(timeStr.substr(0, timeStr.length()-1));
+
+		usleep(500000); // 500ms
+	}
 
 	return 0;
 }
