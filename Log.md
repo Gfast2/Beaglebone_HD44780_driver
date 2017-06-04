@@ -91,4 +91,10 @@ today I write a big scaffold to walk through the initiation of the display.
 Add the Busy-Flag read function in 4bit mode
 try to figure out how to parse input as char[] and display them respectively
 
-### ####### 02.06.2017 ####### ###
+### ####### 25.05.2017 ####### ###
+Make routine to display string & move cursor correctly
+
+### ####### 04.04.2017 ####### ###
+After a very long frastration of "Why this prototype won't work anymore" I correct init the display again
+- ps: I belive, last time I try something new alway with a properly inited display.
+- Finish a physical adapter for this project, and configure the software correctly for it.
