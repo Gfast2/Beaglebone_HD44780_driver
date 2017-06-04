@@ -107,6 +107,43 @@ int positionTrans(int p){
 	return 41 + p - 16 - 1;
 }
 
+void sendData(int data) {
+	setData( (data&0xF0)>>4 ); send();
+	setData(  data&0x0F     ); send();
+	usleep(5);
+	printf("In com data in sendData: %d\n", data);
+}
+
+void clear(){
+	setModeWrite();
+	gpio_set_value(GPIO[0], LOW);
+	cout << "#### clear display: stage 1 ####" << endl;
+//	setData(0b0000); send();
+//	setData(0b0001); send();
+	sendData(0b00000001);
+	getBF();
+	cout << "FINISH clear()" << endl;
+}
+
+void displayChar(char c){
+	cout << "==== DISPLAYCHAR() ====" << endl;
+	setRS_HIGH(); // For writing
+	setModeWrite();
+	sendData( (int)c );
+	getBF();
+}
+
+int print(string str){
+	cout << "RPINT PASSED IN STRING: " << str << endl;
+	unsigned int _rs = 1000;
+	gpio_get_value(GPIO[0], &_rs); // TODO: should I set this pin as input when asking its state?
+	setRS_HIGH();
+	for(unsigned int i=0; i<str.length(); i++){
+		displayChar(str.at(i));
+	}
+	return 0;
+}
+
 // Set the position of the cursor, "Set CGRAM addresss"
 void moveCursor(unsigned int p){
 	setRS_LOW();
@@ -126,52 +163,6 @@ void moveCursor(unsigned int p){
 	if (cin.get() == '\n') cout << "." << endl;
 
 	getBF();
-}
-
-void displayChar(char c){
-	cout << "==== DISPLAYCHAR() ====" << endl;
-	setRS_HIGH(); // For writing
-	setModeWrite();
-	setData(( ((int)c) & 0xF0) >> 4);
-	send();
-	setData(( ((int)c) & 0x0F));
-	send();
-	getBF();
-}
-
-int print(string str){
-	cout << "RPINT PASSED IN STRING: " << str << endl;
-	unsigned int _rs = 1000;
-	gpio_get_value(GPIO[0], &_rs); // TODO: should I set this pin as input when asking its state?
-	setRS_HIGH();
-	for(unsigned int i=0; i<str.length(); i++){
-		displayChar(str.at(i));
-	}
-	return 0;
-}
-
-void clear(){
-	setModeWrite();
-	gpio_set_value(GPIO[0], LOW);
-	cout << "#### clear display: stage 1 ####" << endl;
-	setData(0b0000);
-	send();
-	setData(0b0001);
-	send();
-	getBF();
-	cout << "FINISH clear()" << endl;
-}
-
-void sendData(int data) {
-	setData( (data|0xF0)>>4 );
-	if (cin.get() == '\n') cout << "Press Enter to send 4-bit MSB" << endl;
-	send();
-	usleep(5);
-	setData(  data|0x0F     );
-	if (cin.get() == '\n') cout << "Press Enter to send 4-bit LSB" << endl;
-	send();
-	usleep(5);
-
 }
 
 int main(int argc, char *argv[]) {
@@ -198,30 +189,30 @@ int main(int argc, char *argv[]) {
 
 	cout << "==== INIT STEP TWO: FUNCTION SET ====" << endl;
 //	setModeWrite();
-	setData(0b0010); send();
-	setData(0b1000); send();
-//	sendData(0b00101000);
+//	setData(0b0010); send();
+//	setData(0b1000); send();
+	sendData(0b00101000);
 //	getBF();
 
 	cout << "==== INIT STEP THREE: DISPLAY ON/OFF ====" << endl;
 //	setModeWrite();
-	setData(0b0000); send();
-	setData(0b1111); send();
-//	sendData(0b00001111);
+//	setData(0b0000); send();
+//	setData(0b1111); send();
+	sendData(0b00001111);
 //	getBF();
 
 	cout << "==== INIT STEP FOUR: CLEAR DISPLAY ====" << endl;
 //	setModeWrite();
-	setData(0b0000); send();
-	setData(0b0001); send();
-//	sendData(0b00000001);
+//	setData(0b0000); send();
+//	setData(0b0001); send();
+	sendData(0b00000001);
 //	getBF();
 
 	cout << "==== INIT STEP FIVE: ENTRY> MODE SET ====" << endl;
 //	setModeWrite();
-	setData(0b0000); send();
-	setData(0b0110); send();
-//	sendData(0b00000110);
+//	setData(0b0000); send();
+//	setData(0b0110); send();
+	sendData(0b00000110);
 //	getBF();
 
 	cout << "And now all init steps are finished, press Enter to finish the init process" << endl;
