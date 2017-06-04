@@ -108,20 +108,19 @@ int positionTrans(int p){
 }
 
 void sendData(int data) {
+	setModeWrite();
 	setData( (data&0xF0)>>4 ); send();
 	setData(  data&0x0F     ); send();
 	usleep(5);
 	printf("In com data in sendData: %d\n", data);
+	getBF();
 }
 
 void clear(){
 	setModeWrite();
 	gpio_set_value(GPIO[0], LOW);
 	cout << "#### clear display: stage 1 ####" << endl;
-//	setData(0b0000); send();
-//	setData(0b0001); send();
 	sendData(0b00000001);
-	getBF();
 	cout << "FINISH clear()" << endl;
 }
 
@@ -130,7 +129,6 @@ void displayChar(char c){
 	setRS_HIGH(); // For writing
 	setModeWrite();
 	sendData( (int)c );
-	getBF();
 }
 
 int print(string str){
@@ -161,8 +159,6 @@ void moveCursor(unsigned int p){
 	setData(0b1001); send();
 
 	if (cin.get() == '\n') cout << "." << endl;
-
-	getBF();
 }
 
 int main(int argc, char *argv[]) {
@@ -188,32 +184,16 @@ int main(int argc, char *argv[]) {
 //	getBF();
 
 	cout << "==== INIT STEP TWO: FUNCTION SET ====" << endl;
-//	setModeWrite();
-//	setData(0b0010); send();
-//	setData(0b1000); send();
 	sendData(0b00101000);
-//	getBF();
 
 	cout << "==== INIT STEP THREE: DISPLAY ON/OFF ====" << endl;
-//	setModeWrite();
-//	setData(0b0000); send();
-//	setData(0b1111); send();
 	sendData(0b00001111);
-//	getBF();
 
 	cout << "==== INIT STEP FOUR: CLEAR DISPLAY ====" << endl;
-//	setModeWrite();
-//	setData(0b0000); send();
-//	setData(0b0001); send();
 	sendData(0b00000001);
-//	getBF();
 
 	cout << "==== INIT STEP FIVE: ENTRY> MODE SET ====" << endl;
-//	setModeWrite();
-//	setData(0b0000); send();
-//	setData(0b0110); send();
 	sendData(0b00000110);
-//	getBF();
 
 	cout << "And now all init steps are finished, press Enter to finish the init process" << endl;
 	cout << "==== ALL FINISHED ====" << endl;
@@ -221,15 +201,12 @@ int main(int argc, char *argv[]) {
 
 	setModeWrite();
 	print("123456789 123456789 ");
-	getBF();
 
 	if (cin.get() == '\n') cout << "." << endl;
 	clear();
 
 	moveCursor(5);
-
 	print("Hallo Yan :D !!");
-
 
 	if (cin.get() == '\n') cout << "." << endl;
 	moveCursor(5);
