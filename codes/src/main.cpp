@@ -130,20 +130,13 @@ int print(string str){
 }
 
 // Set the position of the cursor, "Set CGRAM addresss"
-void moveCursor(unsigned int p){
+void moveCursor(uint8_t line, uint8_t posi){
 	setRS_LOW();
 	setModeWrite();
+	uint8_t p;
+	p = line == 1 ? (posi + 0b10000000-1) : (posi + 40 + 0b10000000);
+	sendData(p);
 
-	// Hard coded position: -> 5 ( start from 0)
-	setData(0b1000); send();
-	setData(0b0101); send();
-
-
-	// The first character on the second line -> 41
-	setData(0b1010); send();
-	setData(0b1001); send();
-
-//	if (cin.get() == '\n') cout << "." << endl;
 }
 
 int main(int argc, char *argv[]) {
@@ -196,11 +189,11 @@ int main(int argc, char *argv[]) {
 	if (cin.get() == '\n') cout << "." << endl;
 	clear();
 
-	moveCursor(5);
+	moveCursor(1, 5);
 	print("Hallo Yan :D !!");
 
 	if (cin.get() == '\n') cout << "." << endl;
-	moveCursor(5);
+	moveCursor(1, 5);
 	clear();
 	print("Hallo Qiao!");
 
@@ -212,7 +205,7 @@ int main(int argc, char *argv[]) {
 		time_t t = time(NULL);
 		struct tm tm = *localtime(&t);
 		printf("now: %d-%d-%d %d:%d:%d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
-		moveCursor(5);
+		moveCursor(2, 1);
 
 		uint8_t time_buffer_size = 20;
 		char time_buffer[time_buffer_size];
@@ -220,7 +213,7 @@ int main(int argc, char *argv[]) {
 		string timeStr(time_buffer); // cast a char array -> c++ string
 		print(timeStr.substr(0, timeStr.length()-1));
 
-		usleep(500000); // 500ms
+		sleep(3);
 	}
 
 	return 0;
