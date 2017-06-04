@@ -15,20 +15,18 @@
 #include "./gpio/SimpleGPIO.h"
 #include <typeinfo>
 
-// For sleep better:
-// https://stackoverflow.com/questions/158585/how-do-you-add-a-timed-delay-to-a-c-program
-#include <chrono> // For sleep type
-#include <thread> // For sleep type
-
 using namespace std;
-using namespace std::this_thread;
-using namespace std::chrono;
 
-// TODO: usleep() 's arguments are microseconds!!!
+// For "better sleep":
+// https://stackoverflow.com/questions/158585/how-do-you-add-a-timed-delay-to-a-c-program
+//#include <chrono> // For sleep type
+//#include <thread> // For sleep type
+//using namespace std::this_thread;
+//using namespace std::chrono;
 
 // gpio number on Beaglebone
-// pin name:			 RS  RW  EN  D4  D5  D6  D7
-unsigned int GPIO[7] = { 66, 67, 69, 68, 45, 44, 26 };
+// pin name:             rs, rw, en, d4, d5, d6, d7
+unsigned int GPIO[7] = { 66, 67, 69, 45, 68, 44, 26 }; // On Prototype Board
 
 void initPinMode() {
 	for (int i = 0; i < 7; i++) {
@@ -40,13 +38,9 @@ void initPinMode() {
 }
 
 // This way is far slower then it should (see datasheet)
-// TODO: Here I should split it into two parts:
-// 		 Put this pin high before I change datas on DB pins
-// 		 Put this pin low that is acutally what "send()" means
 void send() {
 	gpio_set_value(GPIO[2], HIGH);
-	usleep(500); // the minimum time is 450 nano second, here I do 5000 nano sec.
-//	sleep_for( nanoseconds(1000) );
+	usleep(500); // the minimum time is 450 nano second, here I do 500 micro second
 	gpio_set_value(GPIO[2], LOW);
 }
 
@@ -117,7 +111,6 @@ int positionTrans(int p){
 void moveCursor(unsigned int p){
 	setRS_LOW();
 	setModeWrite();
-	int hdPosition = positionTrans(5);
 	//	int finalPosi = 0b10000000 | hdPosition;
 
 	// Hard coded position: -> 5 ( start from 0)
@@ -170,50 +163,66 @@ void clear(){
 }
 
 void sendData(int data) {
-	setData( (data|0xF0)>>4 ); send();
+	setData( (data|0xF0)>>4 );
+	if (cin.get() == '\n') cout << "Press Enter to send 4-bit MSB" << endl;
+	send();
 	usleep(5);
-	setData(  data|0x0F     ); send();
+	setData(  data|0x0F     );
+	if (cin.get() == '\n') cout << "Press Enter to send 4-bit LSB" << endl;
+	send();
 	usleep(5);
+
 }
 
 int main(int argc, char *argv[]) {
+	cout << "######################" << endl;
+	cout << "### PROGRAMM START ###" << endl;
+	cout << "######################" << endl;
+	cout << "------------------------------------------------------------------" << endl;
+
 	cout << "=== INIT PIN STATE ===" << endl;
 	initPinMode();
 
 	cout << "=== INIT STEP ONE: TURN TO 4-BIT MODE ===" << endl;
-	setModeWrite();
-//	setData(0b0010); send();
+
+	setModeWrite(); // Make sure rw pin low
+	setRS_LOW(); // Make sure rs pin low
+
+	setData(0b0010);
+	if (cin.get() == '\n') cout << "Press Enter to send 4-bit mode command (very beginning)" << endl;
+	send();
+
 //	setData(0b1000); send();
-	sendData(0b00101000);
-	getBF();
+//	sendData(0b00101000);
+//	getBF();
 
 	cout << "==== INIT STEP TWO: FUNCTION SET ====" << endl;
-	setModeWrite();
-//	setData(0b0010); send();
-//	setData(0b1000); send();
-	sendData(0b00101000);
-	getBF();
+//	setModeWrite();
+	setData(0b0010); send();
+	setData(0b1000); send();
+//	sendData(0b00101000);
+//	getBF();
 
 	cout << "==== INIT STEP THREE: DISPLAY ON/OFF ====" << endl;
-	setModeWrite();
-//	setData(0b0000); send();
-//	setData(0b1111); send();
-	sendData(0b00001111);
-	getBF();
+//	setModeWrite();
+	setData(0b0000); send();
+	setData(0b1111); send();
+//	sendData(0b00001111);
+//	getBF();
 
 	cout << "==== INIT STEP FOUR: CLEAR DISPLAY ====" << endl;
-	setModeWrite();
-//	setData(0b0000); send();
-//	setData(0b0001); send();
-	sendData(0b00000001);
-	getBF();
+//	setModeWrite();
+	setData(0b0000); send();
+	setData(0b0001); send();
+//	sendData(0b00000001);
+//	getBF();
 
 	cout << "==== INIT STEP FIVE: ENTRY> MODE SET ====" << endl;
-	setModeWrite();
-//	setData(0b0000); send();
-//	setData(0b0110); send();
-	sendData(0b00000110);
-	getBF();
+//	setModeWrite();
+	setData(0b0000); send();
+	setData(0b0110); send();
+//	sendData(0b00000110);
+//	getBF();
 
 	cout << "And now all init steps are finished, press Enter to finish the init process" << endl;
 	cout << "==== ALL FINISHED ====" << endl;
@@ -223,10 +232,16 @@ int main(int argc, char *argv[]) {
 	print("123456789 123456789 ");
 	getBF();
 
+	if (cin.get() == '\n') cout << "." << endl;
 	clear();
 
 	moveCursor(5);
 
+	print("Hallo Yan :D !!");
+
+
+	if (cin.get() == '\n') cout << "." << endl;
+	moveCursor(5);
 	print("Hallo Qiao!");
 
 	return 0;
